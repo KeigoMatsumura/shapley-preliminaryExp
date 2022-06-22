@@ -1,0 +1,1 @@
+{'question': 'What colors is the bus painted?', 'image_id': 553735, 'question_id': 5537351}

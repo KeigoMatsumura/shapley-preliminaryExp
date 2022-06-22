@@ -1,0 +1,1 @@
+{'question': 'What colors are the wheel caps?', 'image_id': 147896, 'question_id': 1478961}
