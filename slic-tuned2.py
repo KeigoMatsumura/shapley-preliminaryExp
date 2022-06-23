@@ -46,7 +46,6 @@ for (i, segVal) in enumerate(np.unique(segments)):
 	mask = np.zeros(image.shape[:2], dtype = "uint8")
 	mask[segments == segVal] = 255
     
-    fetch_segment = cv2.bitwise_and()
     fetch_segment = cv2.bitwise_and(image, image, mask=mask)
     remove_segment = cv2.bitwise_xor(image, image, mask=mask)
 
