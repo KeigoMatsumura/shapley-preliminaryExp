@@ -1,7 +1,7 @@
 import numpy as np
 
 
-def neighbour_segmentation():
+def neighbor_segmentation():
     width, height = (256, 256)
     img = np.zeros((width, height, 3), np.uint8)
     # [segment1, segment2, ...]
