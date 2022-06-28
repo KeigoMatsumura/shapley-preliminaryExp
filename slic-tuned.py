@@ -26,7 +26,7 @@ def applySLIC(img_path, numSegments, tg_segments, k):
 	for (i, segVal) in enumerate(np.unique(segments)):
 		# construct a mask for the segment
 		print ("[x] inspecting segment %d" % (i))
-
+		# print(segVal)
 		mask = np.zeros(image.shape[:2], dtype = "uint8")
 		mask[segments == segVal] = 255
 

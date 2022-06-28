@@ -1,10 +1,5 @@
 # import the necessary packages
-from turtle import width
 from skimage.segmentation import slic
-from skimage.segmentation import mark_boundaries
-from skimage.util import img_as_float
-from scipy.spatial import distance
-import matplotlib.pyplot as plt
 import numpy as np
 import cv2
 import os
@@ -25,27 +20,19 @@ def neighbour_segmentation(segments,tg_seg):
 	for i in range(width):
 		for j in range(height):
 			pixel_segment_map[(i, j)] = -1
-	# print(pixel_segment_map)
-	# print(len(pixel_segment_map))
 
     # allocate segment number for each pixels
 	for x in range(width):
 		for y in range(height):
 			pixel_segment_map[(x, y)] = segments[x][y]
-	# print(pixel_segment_map)	
+
 
 	# get the list of pixels which belong to target segment
 	tg_pixel = [k for k, v in pixel_segment_map.items() if v == tg_seg]
-	# print(tg_pixel)
-	
 
 
 	# get neighbour segments 
 	ans = set()
-	# segment = segments[tg_seg]
-	
-	# print(len(segment))
-	# print(segment)
 	nx = [1,1,0,-1,-1,-1,0,1]
 	ny = [0,1,1,1,0,-1,-1,-1]
 
@@ -57,7 +44,7 @@ def neighbour_segmentation(segments,tg_seg):
 			if 0 <= dx < width and 0 <= dy < height:
 				segment_idx = pixel_segment_map[(dx, dy)]
 				ans.add(segment_idx)
-	ans = list(ans)
+	ans = list(sorted(ans))
 	return ans
 
 
@@ -67,58 +54,49 @@ def main():
 	image = cv2.imread(img_path)
 
 	# set the number of segment
-	numofSegments=200
+	numofSegments=300
 
 	# set the target segment which you want to get rid of the neighbour
-	target_segment=int(10)
+	target_segment=int(120)
 
 	# k is the number of how many neighbours you remove
 	k=int(5)
 	
 
 	# create a directory as the saving dst
-	if not os.path.exists('Segments'):
-		os.mkdir('Segments')
-	if not os.path.exists('Segments/mask'):
-		os.mkdir('Segments/mask')
-	if not os.path.exists('Segments/mask_applied'):
-		os.mkdir('Segments/mask_applied')
+	if not os.path.exists('Results'):
+		os.mkdir('Results')
+	if not os.path.exists('Results/neighbours'):
+		os.mkdir('Results/neighbours')
 
 	# get segments from image with applying SLIC method
 	segments = calc_segments(image, numofSegments)
 	neighbours = neighbour_segmentation(segments, target_segment)
+	print("Target segment is " + str(target_segment))
+	print("Target segment and its neighbours are... " + str(neighbours))
 
-	for (i, segVal) in enumerate(np.unique(segments)):
-			# construct a mask for the segment
-			print ("[x] inspecting segment %d" % (i))
-
-			mask = np.zeros(image.shape[:2], dtype = "uint8")
-			mask[segments == segVal] = 255
-		
-
+	# mask neighbour segments of the target segment
+	mask = np.zeros(image.shape[:2], dtype = "uint8")
+	for i, neighbour in enumerate(neighbours):
+		# for (i, neighbour) in enumerate(np.unique(segments)):
+			mask[segments == neighbour] = 255
 			mask = cv2.bitwise_not(mask)
-			maskApplied = cv2.bitwise_and(image, image, mask=mask)
-			# save segments
-			cv2.imwrite("Segments/mask" + f"/segment_{i}.png", mask)
-			cv2.imwrite("Segments/mask_applied" + f"/segment_{i}.png", maskApplied)
+			masked = cv2.bitwise_and(image, image, mask=mask)
+			cv2.imwrite("Results/neighbours" + f"/neighbour_mask{neighbour}.png", masked)
 
 			# show the masked region
 			cv2.imshow("Mask", mask)
-			cv2.imshow("Applied", maskApplied)
+			cv2.imshow("Applied", masked)
 			cv2.waitKey(0)
 
-	mask = np.zeros(image.shape[:2], dtype = "uint8")
-	mask[segments == neighbours] = 255
-	# for neighbour in neighbours:
-	# 	mask[segments == neighbour] = 255
+			# to re-generate the masked image, flip pixels again
+			mask = cv2.bitwise_not(mask)
 
-	mask = cv2.bitwise_not(mask)
-	maskApplied = cv2.bitwise_and(image, image, mask=mask)
+	# save segments
+	# cv2.imwrite("Segments/" + f"/tg_seg_is_{target_segment}.png", tgseg_mask)
+	cv2.imwrite("Results/" + f"/neighbour_mask.png", mask)
+	cv2.imwrite("Results/" + f"/neighbour.png", masked)
 
-	# show the masked region
-	cv2.imshow("Mask", mask)
-	cv2.imshow("Applied", maskApplied)
-	cv2.waitKey(0)
 
 if __name__ == "__main__":
 	main()
