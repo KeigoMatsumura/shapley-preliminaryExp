@@ -37,13 +37,13 @@ def applySLIC(img_path, numSegments, tg_segments, k):
 		cv2.imwrite("Segments/mask_applied" + f"/segment_{i}.png", maskApplied)
 
 		# show the masked region
-		cv2.imshow("Mask", mask)
-		cv2.imshow("Applied", maskApplied)
-		cv2.waitKey(0)
+		# cv2.imshow("Mask", mask)
+		# cv2.imshow("Applied", maskApplied)
+		# cv2.waitKey(0)
 
 def main():
 	img_path = "./Images/test_qid_tensor([[383]]).png"
-	numSegments=200
+	numSegments=300
 	target_seg=int(55)
 	k=int(5)
 

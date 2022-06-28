@@ -4,6 +4,7 @@ import numpy as np
 import cv2
 import os
 
+# for input image and pixel_segment_map
 width=256
 height=256
 
@@ -57,9 +58,9 @@ def main():
 	numofSegments=300
 
 	# set the target segment which you want to get rid of the neighbour
-	target_segment=int(120)
+	target_segment=int(221)
 
-	# k is the number of how many neighbours you remove
+	# k is the number of how many neighbours removed
 	k=int(5)
 	
 
@@ -94,8 +95,9 @@ def main():
 
 	# save segments
 	# cv2.imwrite("Segments/" + f"/tg_seg_is_{target_segment}.png", tgseg_mask)
+	cv2.imwrite("Results/" + f"/original.png", image)
 	cv2.imwrite("Results/" + f"/neighbour_mask.png", mask)
-	cv2.imwrite("Results/" + f"/neighbour.png", masked)
+	cv2.imwrite("Results/" + f"/neighbour_masked.png", masked)
 
 
 if __name__ == "__main__":
